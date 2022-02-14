@@ -1,5 +1,10 @@
 import React, { useEffect } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Row,
@@ -11,11 +16,11 @@ import {
   Card,
 } from 'react-bootstrap';
 import Message from '../../components/Message';
-import { addToCart } from '../../action/cartAction';
+import { addToCart, removeFromCart } from '../../action/cartAction';
 
 const CartScreen = () => {
   const params = useParams();
-  let navigate = useNavigate() ;
+  let navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
@@ -32,12 +37,11 @@ const CartScreen = () => {
   }, [dispatch, productId, qty]);
 
   const removeFromCartHandler = (id) => {
-    console.log(id);
+    dispatch(removeFromCart(id));
   };
 
   const checkOutHandler = () => {
-    // console.log('checkout');
-    navigate("/login?redirect=shipping",{replace=true})
+    navigate('/login?redirect=shipping', { replace: true });
   };
 
   return (
