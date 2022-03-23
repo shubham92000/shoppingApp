@@ -37,7 +37,7 @@ const LoginScreen = ({ location }) => {
       <h1>Sign In</h1>
       {error && <Message variant={`danger`}>{error}</Message>}
       {loading && <Loader />}
-      {/* {userInfo && <Navigate to="/" replace={true} />} */}
+      {userInfo && <Navigate to="/" replace={true} />}
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="email">
           <Form.Label>Email Address</Form.Label>
