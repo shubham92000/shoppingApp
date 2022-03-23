@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { Form, Row, Col, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Message';
@@ -17,14 +17,17 @@ const RegisterScreen = () => {
   const dispatch = useDispatch();
   const userRegister = useSelector((state) => state.userRegister);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { loading, error, userInfo } = userRegister;
 
-  // const redirect = location.search ? location.search.split('=')[1] : '/';
+  const redirectUrl = searchParams.get('redirect')
+    ? searchParams.get('redirect')
+    : '';
 
   useEffect(() => {
     if (userInfo) {
-      navigate('/', { replace: true });
+      navigate(`/${redirectUrl}`, { replace: true });
     }
   }, []);
 
@@ -45,7 +48,7 @@ const RegisterScreen = () => {
       {loading && <Loader />}
       {error && <Message variant={`danger`}>{error}</Message>}
       {loading && <Loader />}
-      {userInfo && <Navigate to="/" replace={true} />}
+      {userInfo && <Navigate to={`/${redirectUrl}`} replace={true} />}
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="name">
           <Form.Label>Name</Form.Label>
@@ -95,7 +98,12 @@ const RegisterScreen = () => {
       <Row className="py-3">
         <Col>
           Have an Account?
-          <Link to={`/login`} style={{ textDecoration: 'none' }}>
+          <Link
+            to={
+              redirectUrl !== '/' ? `/login?redirect=${redirectUrl}` : '/login'
+            }
+            style={{ textDecoration: 'none' }}
+          >
             Login
           </Link>
         </Col>

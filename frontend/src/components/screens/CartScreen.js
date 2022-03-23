@@ -24,6 +24,7 @@ const CartScreen = () => {
   const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
+  const { userInfo } = useSelector((state) => state.userLogin);
 
   const productId = params.id;
   const qty = searchParams.get('qty') ? Number(searchParams.get('qty')) : 1;
@@ -41,7 +42,11 @@ const CartScreen = () => {
   };
 
   const checkOutHandler = () => {
-    navigate('/login?redirect=shipping', { replace: true });
+    if (!userInfo) {
+      navigate('/login?redirect=shipping', { replace: true });
+    } else {
+      navigate('/shipping', { replace: true });
+    }
   };
 
   return (
