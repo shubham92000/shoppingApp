@@ -1,21 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Link,
-  Navigate,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../Message';
 import Loader from '../Loader';
-import { getUserDetails } from '../../action/userActions';
+import { getUserDetails, updateUser } from '../../action/userActions';
 import FormContainer from '../FormContainer';
+import { USER_UPDATE_RESET } from '../../constants/userConstants';
 
 const UserEditScreen = () => {
   let params = useParams();
   const userId = params.id;
+
+  let navigate = useNavigate();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,21 +22,31 @@ const UserEditScreen = () => {
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const userUpdate = useSelector((state) => state.userUpdate);
+  const {
+    loading: loadingUpdate,
+    error: errorUpdate,
+    success: successUpdate,
+  } = userUpdate;
 
   useEffect(() => {
-    if (!user.name || user._id !== userId) {
-      dispatch(getUserDetails(userId));
+    if (successUpdate) {
+      dispatch({ type: USER_UPDATE_RESET });
+      navigate('/admin/userlist', { replace: true });
     } else {
-      setName(user.name);
-      setEmail(user.email);
-      setIsAdmin(user.isAdmin);
+      if (!user.name || user._id !== userId) {
+        dispatch(getUserDetails(userId));
+      } else {
+        setName(user.name);
+        setEmail(user.email);
+        setIsAdmin(user.isAdmin);
+      }
     }
-  }, [user]);
+  }, [user, successUpdate]);
 
   const submitHandler = (e) => {
     e.preventDefault();
+    dispatch(updateUser({ _id: userId, name, email, isAdmin }));
   };
 
   return (
@@ -52,6 +59,8 @@ const UserEditScreen = () => {
         <h1>Edit User</h1>
         {loading && <Loader />}
         {error && <Message variant={`danger`}>{error}</Message>}
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant={`danger`}>{errorUpdate}</Message>}
         <Form onSubmit={submitHandler}>
           <Form.Group controlId="name">
             <Form.Label>Name</Form.Label>
