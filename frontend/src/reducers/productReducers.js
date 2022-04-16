@@ -8,6 +8,11 @@ import {
   PRODUCT_DELETE_REQUEST,
   PRODUCT_DELETE_SUCCESS,
   PRODUCT_DELETE_FAIL,
+  PRODUCT_CREATE_REQUEST,
+  PRODUCT_CREATE_SUCCESS,
+  PRODUCT_CREATE_FAIL,
+  PRODUCT_CREATE_RESET,
+  PRODUCT_LIST_RESET,
 } from '../constants/productConstants';
 
 const initialState = {
@@ -32,6 +37,11 @@ const productListReducer = (state = initialState, action) => {
       return {
         loading: false,
         error: action.payload,
+      };
+    case PRODUCT_LIST_RESET:
+      return {
+        ...state,
+        products: [],
       };
     default:
       return state;
@@ -89,4 +99,33 @@ const productDeleteReducer = (state = {}, action) => {
   }
 };
 
-export { productListReducer, productDetailsReducer, productDeleteReducer };
+const productCreateReducer = (state = {}, action) => {
+  switch (action.type) {
+    case PRODUCT_CREATE_REQUEST:
+      return {
+        loading: true,
+      };
+    case PRODUCT_CREATE_SUCCESS:
+      return {
+        loading: false,
+        success: true,
+        product: action.payload,
+      };
+    case PRODUCT_CREATE_FAIL:
+      return {
+        loading: false,
+        error: action.payload,
+      };
+    case PRODUCT_CREATE_RESET:
+      return {};
+    default:
+      return state;
+  }
+};
+
+export {
+  productListReducer,
+  productDetailsReducer,
+  productDeleteReducer,
+  productCreateReducer,
+};
