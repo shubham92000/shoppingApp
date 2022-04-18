@@ -41,15 +41,17 @@ const ProductListScreen = () => {
   const { userInfo } = userLogin;
 
   useEffect(() => {
-    dispatch({ type: PRODUCT_CREATE_RESET });
-    dispatch({ type: PRODUCT_LIST_RESET });
+    if (successCreate) {
+      dispatch({ type: PRODUCT_CREATE_RESET });
+      navigate(`/admin/product/${createdProduct._id}/edit`);
+    }
 
     if (!userInfo || (userInfo && !userInfo.isAdmin)) {
+      dispatch({ type: PRODUCT_LIST_RESET });
       navigate('/login', { replace: true });
     } else if (userInfo && userInfo.isAdmin) {
+      dispatch({ type: PRODUCT_LIST_RESET });
       dispatch(listProducts());
-    } else if (successCreate) {
-      navigate(`/admin/product/${createdProduct._id}/edit`);
     } else {
       navigate('/login', { replace: true });
     }
